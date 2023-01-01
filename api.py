@@ -70,7 +70,7 @@ def searchingImage():
         if compareResult == None:
             print("keepping error =))")
         elif compareResult <= 10.0:
-            response.append(imageData)
+            response.append(imageData) 
 
         
         # os.remove(fileName)
