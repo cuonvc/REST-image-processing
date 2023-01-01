@@ -3,6 +3,7 @@ from app import app
 from flask import jsonify
 from flask import Flask, flash, request
 from PIL import Image
+from PIL import ImageOps
 
 import mysql.connector
 import base64
@@ -64,13 +65,22 @@ def searchingImage():
             # cv2.destroyAllWindows()
             print("Request " + str(imageData[0]) + str(imageRequest.size))
             print("Archive " + str(imageData[0]) + str(imageArchive.size))
-            compareResult = compare_images(imageRequest, imageArchive)
 
+            width, height = imageRequest.size
+            top = (height - 400) / 2
+            bottom = (height - 400) / 2
+            left = (width - 750) / 2
+            right = (width - 750) / 2
 
-        if compareResult == None:
-            print("keepping error =))")
-        elif compareResult <= 10.0:
-            response.append(imageData) 
+            border = (left, top, right, bottom)
+            imageCropped = ImageOps.crop(imageRequest, border)
+
+            compareResult = compareImages(imageCropped, imageArchive)
+            if compareResult == None:
+                print("keepping error!")
+                response.append("Vui lòng chọn ảnh màu và đúng định dạng '.png'")
+            elif compareResult <= 10.0:
+                response.append(imageData)
 
         
         # os.remove(fileName)
@@ -79,8 +89,7 @@ def searchingImage():
 
 
 
-
-def compare_images(img1, img2):
+def compareImages(img1, img2):
 
     # Don't compare if images are different sizes.
     if (img1.size != img2.size) \
@@ -98,6 +107,18 @@ def compare_images(img1, img2):
     ncomponents = img1.size[0] * img1.size[1] * 3
     return (dif / 255.0 * 100) / ncomponents  # Difference (percentage)
 
+def cropImage(imageSrouce):
+
+    imageSrouce = Image.open(imageSrouce)
+    
+    # width, height = imageSrouce.size
+    left = 5
+    top = 4
+    right = 1
+    bottom = 3
+
+    imageCropped = imageSrouce.crop((left, top, right, bottom))
+    imageCropped.show()
 
 
 if __name__ == "__main__":
