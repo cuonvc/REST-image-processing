@@ -1,9 +1,10 @@
-from app import app
-from flaskext.mysql import MySQL
+# from app import app
+# import mysql.connector
 
-mySQL = MySQL()
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '1234'
-app.config['MYSQL_DATABASE_DB'] = 'rest-py'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
-mySQL.init_app(app)
+# connector = mysql.connector.connect(
+#     host='localhost',
+#     database='image-processing',
+#     user='root',
+#     password='1234'
+# )
+# connector.init_app(app)
