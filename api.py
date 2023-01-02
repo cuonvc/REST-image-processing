@@ -66,16 +66,9 @@ def searchingImage():
             print("Request " + str(imageData[0]) + str(imageRequest.size))
             print("Archive " + str(imageData[0]) + str(imageArchive.size))
 
-            width, height = imageRequest.size
-            top = (height - 400) / 2
-            bottom = (height - 400) / 2
-            left = (width - 750) / 2
-            right = (width - 750) / 2
-
-            border = (left, top, right, bottom)
-            imageCropped = ImageOps.crop(imageRequest, border)
-
+            imageCropped = cropImage(imageRequest)
             compareResult = compareImages(imageCropped, imageArchive)
+            
             if compareResult == None:
                 print("keepping error!")
                 response.append("Vui lòng chọn ảnh màu và đúng định dạng '.png'")
@@ -109,16 +102,14 @@ def compareImages(img1, img2):
 
 def cropImage(imageSrouce):
 
-    imageSrouce = Image.open(imageSrouce)
-    
-    # width, height = imageSrouce.size
-    left = 5
-    top = 4
-    right = 1
-    bottom = 3
+    width, height = imageSrouce.size
+    top = (height - 400) / 2
+    bottom = (height - 400) / 2
+    left = (width - 750) / 2
+    right = (width - 750) / 2
 
-    imageCropped = imageSrouce.crop((left, top, right, bottom))
-    imageCropped.show()
+    border = (left, top, right, bottom)
+    return ImageOps.crop(imageSrouce, border)
 
 
 if __name__ == "__main__":
