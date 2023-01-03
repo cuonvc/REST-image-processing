@@ -1,15 +1,11 @@
-import pymysql
 from app import app
-from flask import jsonify
-from flask import Flask, flash, request
+from flask import request
 from PIL import Image
 from PIL import ImageOps
+from io import BytesIO
 
 import mysql.connector
 import base64
-import cv2
-import os
-import pickle
 
 
 connector = mysql.connector.connect(
@@ -24,12 +20,16 @@ connector = mysql.connector.connect(
 # admin upload image
 @app.route('/image-process/upload', methods=['GET', 'POST'])
 def processing():
-    file = request.files['image']
+    fileRequest = request.files['image']
+    imageRequest = Image.open(fileRequest.stream)
+    imageCropped = cropImage(imageRequest)
+
+    buffer = BytesIO()
+    imageCropped.save(buffer, format="PNG")
 
     myCursor = connector.cursor()
-    
     sqlQuery = "INSERT INTO photo(image_encoded) VALUES(%s)"
-    imageEncoded = base64.b64encode(file.read())
+    imageEncoded = base64.b64encode(buffer.getvalue())
     listParameter = [imageEncoded]
     myCursor.execute(sqlQuery, listParameter)
     connector.commit()
@@ -60,11 +60,8 @@ def searchingImage():
         with open(fileName, 'wb') as f:
             f.write(imageDecoded)
             imageArchive = Image.open(fileName)
-            # cv2.imshow("heheh", img)
-            # cv2.waitKey(0)
-            # cv2.destroyAllWindows()
-            print("Request " + str(imageData[0]) + str(imageRequest.size))
-            print("Archive " + str(imageData[0]) + str(imageArchive.size))
+            print("Trigger request " + str(imageData[0]) + str(imageRequest.size))
+            print("Trigger archive " + str(imageData[0]) + str(imageArchive.size))
 
             imageCropped = cropImage(imageRequest)
             compareResult = compareImages(imageCropped, imageArchive)
